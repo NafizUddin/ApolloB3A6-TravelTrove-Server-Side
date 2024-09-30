@@ -9,7 +9,7 @@ export const seed = async () => {
     const admin = await User.findOne({
       role: USER_ROLE.ADMIN,
       email: config.admin_email,
-      status: USER_STATUS.ACTIVE,
+      status: USER_STATUS.PREMIUM,
     });
     if (!admin) {
       console.log('Seeding started...');
@@ -19,7 +19,7 @@ export const seed = async () => {
         role: USER_ROLE.ADMIN,
         email: config.admin_email,
         password: config.admin_password,
-        status: USER_STATUS.ACTIVE,
+        status: USER_STATUS.PREMIUM,
         profilePhoto: config.admin_profile_photo,
       });
       console.log('Admin created successfully...');

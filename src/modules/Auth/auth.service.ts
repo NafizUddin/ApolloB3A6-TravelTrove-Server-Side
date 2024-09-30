@@ -62,14 +62,6 @@ const loginUser = async (payload: TLoginUser) => {
     throw new AppError(httpStatus.NOT_FOUND, 'This user is not found!');
   }
 
-  // checking if the user is blocked
-
-  const userStatus = user?.status;
-
-  if (userStatus === 'BLOCKED') {
-    throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked!');
-  }
-
   //checking if the password is correct
 
   if (!(await User.isPasswordMatched(payload?.password, user?.password)))
@@ -143,12 +135,6 @@ const socialLogin = async (payload: TSocialLoginUser) => {
     };
   }
 
-  const userStatus = user?.status;
-
-  if (userStatus === 'BLOCKED') {
-    throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked!');
-  }
-
   //create token and sent to the  client
 
   const jwtPayload = {
@@ -187,14 +173,6 @@ const changePassword = async (
 
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user is not found!');
-  }
-
-  // checking if the user is blocked
-
-  const userStatus = user?.status;
-
-  if (userStatus === 'BLOCKED') {
-    throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked!');
   }
 
   //checking if the password is correct
@@ -236,13 +214,6 @@ const refreshToken = async (token: string) => {
 
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user is not found!');
-  }
-
-  // checking if the user is blocked
-  const userStatus = user?.status;
-
-  if (userStatus === 'BLOCKED') {
-    throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked!');
   }
 
   if (

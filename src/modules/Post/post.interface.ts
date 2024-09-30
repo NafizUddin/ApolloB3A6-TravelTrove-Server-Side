@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Types } from 'mongoose';
+import { POST_STATUS } from './post.constant';
 
 export interface IPost {
   title: string;
@@ -16,4 +17,5 @@ export interface IPost {
   postAuthor: Types.ObjectId;
   upvote: number;
   downvote: number;
+  status: keyof typeof POST_STATUS;
 }

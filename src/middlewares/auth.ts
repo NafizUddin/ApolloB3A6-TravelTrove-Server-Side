@@ -32,12 +32,6 @@ const auth = (...requiredRoles: (keyof typeof USER_ROLE)[]) => {
     }
     // checking if the user is already deleted
 
-    const status = user?.status;
-
-    if (status === 'BLOCKED') {
-      throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked !');
-    }
-
     if (
       user.passwordChangedAt &&
       User.isJWTIssuedBeforePasswordChanged(
