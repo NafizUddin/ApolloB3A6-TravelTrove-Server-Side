@@ -22,7 +22,7 @@ const registerUser = async (payload: TUser, file: any) => {
   payload.role = USER_ROLE.USER;
   payload.profilePhoto = file?.path;
 
-  // create new user
+  // // create new user
   const newUser = await User.create(payload);
 
   //create token and sent to the  client
