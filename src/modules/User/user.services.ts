@@ -10,16 +10,21 @@ const createUser = async (payload: TUser) => {
 };
 
 const getAllUsersFromDB = async (query: Record<string, unknown>) => {
-  const users = new QueryBuilder(User.find(), query)
-    .fields()
-    .paginate()
-    .sort()
+  const userQuery = new QueryBuilder(User.find(), query)
+    .search(UserSearchableFields)
     .filter()
-    .search(UserSearchableFields);
+    .sort()
+    .paginate()
+    .fields();
 
-  const result = await users.modelQuery;
+  const meta = await userQuery.countTotal();
+  const result = await userQuery.modelQuery;
 
-  return result;
+  if (result.length === 0) {
+    return null;
+  }
+
+  return { meta, result };
 };
 
 const getSingleUserFromDB = async (id: string) => {

@@ -29,6 +29,6 @@ router.post(
 //   carServiceControllers.deleteService,
 // );
 
-// router.get('/', carServiceControllers.getAllServices);
+router.get('/', PostControllers.getAllPosts);
 
 export const PostRoutes = router;

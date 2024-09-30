@@ -14,25 +14,25 @@ const createPost = catchAsync(async (req, res) => {
   });
 });
 
-// const getAllPosts = catchAsync(async (req, res) => {
-//   const result = await ServicesOfCarService.getAllServicesFromDB(req.query);
+const getAllPosts = catchAsync(async (req, res) => {
+  const result = await PostServices.getAllPostsFromDB(req.query);
 
-//   if (result === null) {
-//     return sendResponse(res, {
-//       success: false,
-//       statusCode: httpStatus.NOT_FOUND,
-//       message: 'No Data Found',
-//       data: [],
-//     });
-//   }
+  if (result === null) {
+    return sendResponse(res, {
+      success: false,
+      statusCode: httpStatus.NOT_FOUND,
+      message: 'No Data Found',
+      data: [],
+    });
+  }
 
-//   sendResponse(res, {
-//     success: true,
-//     statusCode: httpStatus.OK,
-//     message: 'Services retrieved successfully',
-//     data: result,
-//   });
-// });
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Posts retrieved successfully',
+    data: result,
+  });
+});
 
 // const getSinglePost = catchAsync(async (req, res) => {
 //   const id = req.params.id;
@@ -84,7 +84,7 @@ const createPost = catchAsync(async (req, res) => {
 
 export const PostControllers = {
   createPost,
-  //   getAllPosts,
+  getAllPosts,
   //   getSinglePost,
   //   updatePost,
   //   deletePost,

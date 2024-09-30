@@ -1,7 +1,7 @@
 /* eslint-disable prefer-const */
 import { FilterQuery, Query } from 'mongoose';
 
-export class QueryBuilder<T> {
+export class PostQueryBuilder<T> {
   public query: Record<string, unknown>; //payload
   public modelQuery: Query<T[], T>;
 
@@ -9,6 +9,7 @@ export class QueryBuilder<T> {
     this.query = query;
     this.modelQuery = modelQuery;
   }
+
   search(searchableFields: string[]) {
     let searchTerm = '';
 
@@ -27,6 +28,7 @@ export class QueryBuilder<T> {
     });
     return this;
   }
+
   paginate() {
     let limit: number = Number(this.query?.limit || 10);
 
@@ -41,6 +43,7 @@ export class QueryBuilder<T> {
 
     return this;
   }
+
   sort() {
     let sortBy = '-createdAt';
 
@@ -51,6 +54,7 @@ export class QueryBuilder<T> {
     this.modelQuery = this.modelQuery.sort(sortBy);
     return this;
   }
+
   fields() {
     let fields = '';
 
@@ -61,6 +65,7 @@ export class QueryBuilder<T> {
     this.modelQuery = this.modelQuery.select(fields);
     return this;
   }
+
   filter() {
     const queryObj = { ...this.query };
     const excludeFields = ['searchTerm', 'page', 'limit', 'sortBy', 'fields'];

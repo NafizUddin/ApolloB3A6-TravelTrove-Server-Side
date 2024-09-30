@@ -3,6 +3,8 @@ import AppError from '../../errors/appError';
 import { User } from '../User/user.model';
 import { IPost } from './post.interface';
 import { Post } from './post.model';
+import { PostQueryBuilder } from '../../builder/PostQueryBuilder';
+import { postSearchableFields } from './post.constant';
 
 const createPostIntoDB = async (
   payload: Partial<IPost>,
@@ -22,23 +24,23 @@ const createPostIntoDB = async (
   return result;
 };
 
-// const getAllPostsFromDB = async (query: Record<string, unknown>) => {
-//   const carServiceQuery = new ServiceQueryBuilder(CarService.find(), query)
-//     .search(carServiceSearchableFields)
-//     .filter()
-//     .sort()
-//     .paginate()
-//     .fields();
+const getAllPostsFromDB = async (query: Record<string, unknown>) => {
+  const postQuery = new PostQueryBuilder(Post.find(), query)
+    .search(postSearchableFields)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
 
-//   const meta = await carServiceQuery.countTotal();
-//   const result = await carServiceQuery.modelQuery;
+  const meta = await postQuery.countTotal();
+  const result = await postQuery.modelQuery;
 
-//   if (result.length === 0) {
-//     return null;
-//   }
+  if (result.length === 0) {
+    return null;
+  }
 
-//   return { meta, result };
-// };
+  return { meta, result };
+};
 
 // const getSingleServiceFromDB = async (id: string) => {
 //   const singleService = await CarService.findById(id);
@@ -77,7 +79,7 @@ const createPostIntoDB = async (
 
 export const PostServices = {
   createPostIntoDB,
-  //   getAllPostsFromDB,
+  getAllPostsFromDB,
   //   getSingleServiceFromDB,
   //   updateServiceIntoDB,
   //   deleteServiceFromDB,
