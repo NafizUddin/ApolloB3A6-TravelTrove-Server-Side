@@ -3,6 +3,7 @@ import AppError from '../../errors/appError';
 import { User } from '../User/user.model';
 import { IComment } from './comment.interface';
 import { Comment } from './comment.model';
+import { QueryBuilder } from '../../builder/QueryBuilder';
 
 const createCommentIntoDB = async (payload: Partial<IComment>) => {
   const { email, ...remaining } = payload;
@@ -21,6 +22,27 @@ const createCommentIntoDB = async (payload: Partial<IComment>) => {
   return result;
 };
 
+const getPostAllCommentsFromDB = async (query: Record<string, unknown>) => {
+  const commentQuery = new QueryBuilder(
+    Comment.find().populate([{ path: 'user' }, { path: 'post' }]),
+    query,
+  )
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  const meta = await commentQuery.countTotal();
+  const result = await commentQuery.modelQuery;
+
+  if (result.length === 0) {
+    return null;
+  }
+
+  return { meta, result };
+};
+
 export const CommentServices = {
   createCommentIntoDB,
+  getPostAllCommentsFromDB,
 };

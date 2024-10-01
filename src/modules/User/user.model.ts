@@ -2,11 +2,7 @@
 import bcryptjs from 'bcryptjs';
 import { Schema, model } from 'mongoose';
 import config from '../../config';
-import {
-  DEFAULT_PROFILE_PHOTO_URL,
-  USER_ROLE,
-  USER_STATUS,
-} from './user.constant';
+import { USER_ROLE, USER_STATUS } from './user.constant';
 import { IUserModel, TUser } from './user.interface';
 
 const userSchema = new Schema<TUser, IUserModel>(
@@ -40,7 +36,6 @@ const userSchema = new Schema<TUser, IUserModel>(
     },
     profilePhoto: {
       type: String,
-      default: DEFAULT_PROFILE_PHOTO_URL,
     },
     followers: [
       {

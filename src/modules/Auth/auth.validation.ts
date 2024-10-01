@@ -9,7 +9,10 @@ const registerValidationSchema = z.object({
       required_error: 'Email is required',
     }),
     password: z.string({ required_error: 'Password is required' }),
-    image: z.string().url('Image URL is required and must be valid').optional(),
+    profilePhoto: z
+      .string()
+      .url('Image URL is required and must be valid')
+      .optional(),
   }),
 });
 

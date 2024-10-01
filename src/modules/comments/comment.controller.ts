@@ -14,29 +14,29 @@ const createComment = catchAsync(async (req, res) => {
   });
 });
 
-// const getAllComments = catchAsync(async (req, res) => {
-//   const result = await PostServices.getAllPostsFromDB(req.query);
+const getPostAllComments = catchAsync(async (req, res) => {
+  const result = await CommentServices.getPostAllCommentsFromDB(req.query);
 
-//   if (result === null) {
-//     return sendResponse(res, {
-//       success: false,
-//       statusCode: httpStatus.NOT_FOUND,
-//       message: 'No Data Found',
-//       data: [],
-//     });
-//   }
+  if (result === null) {
+    return sendResponse(res, {
+      success: false,
+      statusCode: httpStatus.NOT_FOUND,
+      message: 'No Data Found',
+      data: [],
+    });
+  }
 
-//   sendResponse(res, {
-//     success: true,
-//     statusCode: httpStatus.OK,
-//     message: 'Posts retrieved successfully',
-//     data: result,
-//   });
-// });
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Post comments retrieved successfully',
+    data: result,
+  });
+});
 
 export const CommentControllers = {
   createComment,
-  //   getAllComments,
+  getPostAllComments,
   //   getSinglePost,
   //   updatePost,
   //   deletePost,

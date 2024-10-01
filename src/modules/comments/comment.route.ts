@@ -29,6 +29,6 @@ router.post(
 //   carServiceControllers.deleteService,
 // );
 
-// router.get('/', CommentControllers.getAllComments);
+router.get('/', CommentControllers.getPostAllComments);
 
 export const CommentRoutes = router;
