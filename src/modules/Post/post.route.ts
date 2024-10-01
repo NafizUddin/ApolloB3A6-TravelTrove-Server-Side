@@ -26,6 +26,12 @@ router.post(
   PostControllers.addPostUpvote,
 );
 
+router.delete(
+  '/:postId/upvote',
+  auth(USER_ROLE.USER),
+  PostControllers.removePostUpvote,
+);
+
 // router.get('/:id', carServiceControllers.getSingleService);
 
 // router.put(

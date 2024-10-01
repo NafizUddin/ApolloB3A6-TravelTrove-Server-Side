@@ -48,6 +48,20 @@ const addPostUpvote = catchAsync(async (req, res) => {
   });
 });
 
+const removePostUpvote = catchAsync(async (req, res) => {
+  const result = await PostServices.removePostUpvoteFromDB(
+    req.params.postId,
+    req.user,
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'You removed upvote successfully',
+    data: result,
+  });
+});
+
 // const getSinglePost = catchAsync(async (req, res) => {
 //   const id = req.params.id;
 
@@ -100,6 +114,7 @@ export const PostControllers = {
   createPost,
   getAllPosts,
   addPostUpvote,
+  removePostUpvote,
   //   getSinglePost,
   //   updatePost,
   //   deletePost,
