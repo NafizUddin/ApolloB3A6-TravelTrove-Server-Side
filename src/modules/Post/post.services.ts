@@ -25,7 +25,10 @@ const createPostIntoDB = async (
 };
 
 const getAllPostsFromDB = async (query: Record<string, unknown>) => {
-  const postQuery = new PostQueryBuilder(Post.find(), query)
+  const postQuery = new PostQueryBuilder(
+    Post.find().populate('postAuthor'),
+    query,
+  )
     .search(postSearchableFields)
     .filter()
     .sort()

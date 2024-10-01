@@ -4,6 +4,7 @@ import sendResponse from '../../utils/sendResponse';
 import { PostServices } from './post.services';
 
 const createPost = catchAsync(async (req, res) => {
+  console.log(req.body);
   const result = await PostServices.createPostIntoDB(req.body, req.user);
 
   sendResponse(res, {

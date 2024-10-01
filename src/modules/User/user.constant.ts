@@ -15,3 +15,6 @@ export const UserSearchableFields = [
   'role',
   'status',
 ];
+
+export const DEFAULT_PROFILE_PHOTO_URL =
+  'https://www.pngall.com/wp-content/uploads/5/Profile-PNG-Free-Download.png';

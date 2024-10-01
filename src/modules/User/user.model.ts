@@ -2,7 +2,11 @@
 import bcryptjs from 'bcryptjs';
 import { Schema, model } from 'mongoose';
 import config from '../../config';
-import { USER_ROLE, USER_STATUS } from './user.constant';
+import {
+  DEFAULT_PROFILE_PHOTO_URL,
+  USER_ROLE,
+  USER_STATUS,
+} from './user.constant';
 import { IUserModel, TUser } from './user.interface';
 
 const userSchema = new Schema<TUser, IUserModel>(
@@ -27,19 +31,36 @@ const userSchema = new Schema<TUser, IUserModel>(
     },
     password: {
       type: String,
-      select: 0,
+      select: 0, // Exclude password from query results
     },
     status: {
       type: String,
       enum: Object.keys(USER_STATUS),
       default: USER_STATUS.BASIC,
     },
-    passwordChangedAt: {
-      type: Date,
-    },
     profilePhoto: {
       type: String,
-      default: null,
+      default: DEFAULT_PROFILE_PHOTO_URL,
+    },
+    followers: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'User', // Refers to the User model
+      },
+    ],
+    following: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'User', // Refers to the User model
+      },
+    ],
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    totalUpvote: {
+      type: Number,
+      default: 0,
     },
   },
   {

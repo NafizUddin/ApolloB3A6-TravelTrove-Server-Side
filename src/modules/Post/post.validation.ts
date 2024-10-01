@@ -23,6 +23,11 @@ const createPostValidationSchema = z.object({
       })
       .trim(),
     image: z.string().url('Image URL is required and must be valid'),
+    status: z
+      .string({
+        required_error: 'Post status is required',
+      })
+      .trim(),
   }),
 });
 

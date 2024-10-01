@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { USER_ROLE, USER_STATUS } from './user.constant';
 
 export type TUser = {
@@ -9,7 +9,10 @@ export type TUser = {
   email: string;
   password: string;
   status: keyof typeof USER_STATUS;
-  passwordChangedAt?: Date;
+  followers: Types.ObjectId[];
+  following: Types.ObjectId[];
+  isVerified: boolean;
+  totalUpvote: number;
   profilePhoto?: string;
   createdAt?: Date;
   updatedAt?: Date;

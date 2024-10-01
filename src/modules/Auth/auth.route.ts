@@ -6,15 +6,11 @@ import validateRequest, {
 import { USER_ROLE } from '../User/user.constant';
 import { AuthControllers } from './auth.controller';
 import { AuthValidation } from './auth.validation';
-import { multerUpload } from '../../config/multer.config';
-import { parseBody } from '../../middlewares/bodyParser';
 
 const router = express.Router();
 
 router.post(
   '/register',
-  multerUpload.single('file'),
-  parseBody,
   validateRequest(AuthValidation.registerValidationSchema),
   AuthControllers.registerUser,
 );
