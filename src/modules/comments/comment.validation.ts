@@ -26,6 +26,18 @@ const createCommentValidationSchema = z.object({
   }),
 });
 
+const updateCommentValidationSchema = z.object({
+  body: z.object({
+    text: z
+      .string({
+        required_error: 'Comment is required',
+        invalid_type_error: 'Comment must be a string',
+      })
+      .trim(),
+  }),
+});
+
 export const commentValidations = {
   createCommentValidationSchema,
+  updateCommentValidationSchema,
 };

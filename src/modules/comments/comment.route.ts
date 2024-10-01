@@ -14,14 +14,12 @@ router.post(
   CommentControllers.createComment,
 );
 
-// router.get('/:id', carServiceControllers.getSingleService);
-
-// router.put(
-//   '/:id',
-//   auth(USER_ROLE.admin),
-//   validateRequest(carServiceValidations.updateCarServiceValidationSchema),
-//   carServiceControllers.updateService,
-// );
+router.put(
+  '/:id',
+  auth(USER_ROLE.USER),
+  validateRequest(commentValidations.updateCommentValidationSchema),
+  CommentControllers.updatePostComment,
+);
 
 // router.delete(
 //   '/:id',

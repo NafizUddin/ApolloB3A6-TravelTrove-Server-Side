@@ -42,7 +42,19 @@ const getPostAllCommentsFromDB = async (query: Record<string, unknown>) => {
   return { meta, result };
 };
 
+const updatePostCommentIntoDB = async (
+  payload: Partial<IComment>,
+  id: string,
+) => {
+  const result = await Comment.findByIdAndUpdate(id, payload, {
+    new: true,
+  });
+
+  return result;
+};
+
 export const CommentServices = {
   createCommentIntoDB,
   getPostAllCommentsFromDB,
+  updatePostCommentIntoDB,
 };
