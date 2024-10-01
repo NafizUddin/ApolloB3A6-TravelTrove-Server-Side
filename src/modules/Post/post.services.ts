@@ -5,6 +5,7 @@ import { IPost } from './post.interface';
 import { Post } from './post.model';
 import { PostQueryBuilder } from '../../builder/PostQueryBuilder';
 import { postSearchableFields } from './post.constant';
+import mongoose, { Types } from 'mongoose';
 
 const createPostIntoDB = async (
   payload: Partial<IPost>,
@@ -45,6 +46,70 @@ const getAllPostsFromDB = async (query: Record<string, unknown>) => {
   return { meta, result };
 };
 
+const addPostUpvoteIntoDB = async (
+  postId: string,
+  userData: Record<string, unknown>,
+) => {
+  const { email, _id } = userData;
+
+  const user = await User.isUserExistsByEmail(email as string);
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "User doesn't exist!");
+  }
+
+  const post = await Post.findById(postId);
+
+  if (!post) {
+    throw new AppError(httpStatus.NOT_FOUND, "Post doesn't exist!");
+  }
+
+  const userId = new Types.ObjectId(_id as string);
+
+  // Check if the user's ObjectId is in the upvote array
+  if (post.upvote.some((upvoteId) => upvoteId.equals(userId))) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'User has already upvoted this post!',
+    );
+  }
+
+  // // Check if the user's ObjectId is in the downvote array
+  // if (post.downvote.some((downvoteId) => downvoteId.equals(userId))) {
+  //   throw new AppError(
+  //     httpStatus.BAD_REQUEST,
+  //     'User has already downvoted this post!',
+  //   );
+  // }
+
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    const result = await Post.findByIdAndUpdate(
+      postId,
+      { $addToSet: { upvote: _id } }, // Use $addToSet to avoid duplicates
+      { new: true, runValidators: true, session },
+    ).populate('upvote');
+
+    await User.findByIdAndUpdate(
+      _id,
+      { $inc: { totalUpvote: 1 } },
+      { new: true, session },
+    );
+
+    await session.commitTransaction();
+    await session.endSession();
+
+    return result;
+  } catch (error) {
+    console.log(error);
+    await session.abortTransaction();
+    await session.endSession();
+  }
+};
+
 // const getSingleServiceFromDB = async (id: string) => {
 //   const singleService = await CarService.findById(id);
 
@@ -83,6 +148,7 @@ const getAllPostsFromDB = async (query: Record<string, unknown>) => {
 export const PostServices = {
   createPostIntoDB,
   getAllPostsFromDB,
+  addPostUpvoteIntoDB,
   //   getSingleServiceFromDB,
   //   updateServiceIntoDB,
   //   deleteServiceFromDB,

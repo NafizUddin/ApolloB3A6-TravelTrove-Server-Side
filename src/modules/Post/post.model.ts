@@ -33,16 +33,18 @@ const postSchema = new Schema<IPost>(
       ref: 'User',
       required: true,
     },
-    upvote: {
-      type: Number,
-      default: 0,
-      required: true,
-    },
-    downvote: {
-      type: Number,
-      default: 0,
-      required: true,
-    },
+    upvote: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'User', // Refers to the User model
+      },
+    ],
+    downvote: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'User', // Refers to the User model
+      },
+    ],
     status: {
       type: String,
       enum: Object.keys(POST_STATUS),

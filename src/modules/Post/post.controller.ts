@@ -34,6 +34,20 @@ const getAllPosts = catchAsync(async (req, res) => {
   });
 });
 
+const addPostUpvote = catchAsync(async (req, res) => {
+  const result = await PostServices.addPostUpvoteIntoDB(
+    req.params.postId,
+    req.user,
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'You gave upvote successfully',
+    data: result,
+  });
+});
+
 // const getSinglePost = catchAsync(async (req, res) => {
 //   const id = req.params.id;
 
@@ -85,6 +99,7 @@ const getAllPosts = catchAsync(async (req, res) => {
 export const PostControllers = {
   createPost,
   getAllPosts,
+  addPostUpvote,
   //   getSinglePost,
   //   updatePost,
   //   deletePost,

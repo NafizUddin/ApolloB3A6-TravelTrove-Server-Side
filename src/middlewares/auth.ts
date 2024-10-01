@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from 'express';
 import httpStatus from 'http-status';
 import { JwtPayload } from 'jsonwebtoken';
@@ -22,7 +24,7 @@ const auth = (...requiredRoles: (keyof typeof USER_ROLE)[]) => {
       config.jwt_access_secret as string,
     ) as JwtPayload;
 
-    const { role, email, iat } = decoded;
+    const { role, email, iat, _id } = decoded;
 
     // checking if the user is exist
     const user = await User.isUserExistsByEmail(email);

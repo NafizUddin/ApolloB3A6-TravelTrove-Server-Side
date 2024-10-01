@@ -15,7 +15,7 @@ export interface IPost {
   description: string; // HTML template in string format
   image: string;
   postAuthor: Types.ObjectId;
-  upvote: number;
-  downvote: number;
+  upvote: Types.ObjectId[];
+  downvote: Types.ObjectId[];
   status: keyof typeof POST_STATUS;
 }

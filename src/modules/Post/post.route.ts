@@ -14,6 +14,18 @@ router.post(
   PostControllers.createPost,
 );
 
+router.post(
+  '/:postId/upvote',
+  auth(USER_ROLE.USER),
+  PostControllers.addPostUpvote,
+);
+
+router.post(
+  '/:postId/downvote',
+  auth(USER_ROLE.USER),
+  PostControllers.addPostUpvote,
+);
+
 // router.get('/:id', carServiceControllers.getSingleService);
 
 // router.put(
