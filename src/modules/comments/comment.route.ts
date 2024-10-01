@@ -21,11 +21,11 @@ router.put(
   CommentControllers.updatePostComment,
 );
 
-// router.delete(
-//   '/:id',
-//   auth(USER_ROLE.admin),
-//   carServiceControllers.deleteService,
-// );
+router.delete(
+  '/:id',
+  auth(USER_ROLE.USER),
+  CommentControllers.deletePostComment,
+);
 
 router.get('/', CommentControllers.getPostAllComments);
 

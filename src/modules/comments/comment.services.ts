@@ -53,8 +53,14 @@ const updatePostCommentIntoDB = async (
   return result;
 };
 
+const deletePostCommentFromDB = async (id: string) => {
+  const result = await Comment.findByIdAndDelete(id);
+  return result;
+};
+
 export const CommentServices = {
   createCommentIntoDB,
   getPostAllCommentsFromDB,
   updatePostCommentIntoDB,
+  deletePostCommentFromDB,
 };
