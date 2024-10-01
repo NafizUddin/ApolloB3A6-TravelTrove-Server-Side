@@ -104,7 +104,6 @@ const addPostUpvoteIntoDB = async (
 
     return result;
   } catch (error) {
-    console.log(error);
     await session.abortTransaction();
     await session.endSession();
   }
@@ -168,7 +167,120 @@ const removePostUpvoteFromDB = async (
 
     return result;
   } catch (error) {
-    console.log(error);
+    await session.abortTransaction();
+    await session.endSession();
+  }
+};
+
+const addPostDownvoteIntoDB = async (
+  postId: string,
+  userData: Record<string, unknown>,
+) => {
+  const { email, _id } = userData;
+
+  const user = await User.isUserExistsByEmail(email as string);
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "User doesn't exist!");
+  }
+
+  const post = await Post.findById(postId);
+
+  if (!post) {
+    throw new AppError(httpStatus.NOT_FOUND, "Post doesn't exist!");
+  }
+
+  const userId = new Types.ObjectId(_id as string);
+
+  // Check if the user's ObjectId is in the upvote array
+  if (post.downvote.some((downvoteId) => downvoteId.equals(userId))) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'User has already downvoted this post!',
+    );
+  }
+
+  // // Check if the user's ObjectId is in the downvote array
+  // if (post.downvote.some((downvoteId) => downvoteId.equals(userId))) {
+  //   throw new AppError(
+  //     httpStatus.BAD_REQUEST,
+  //     'User has already downvoted this post!',
+  //   );
+  // }
+
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    const result = await Post.findByIdAndUpdate(
+      postId,
+      { $addToSet: { downvote: _id } }, // Use $addToSet to avoid duplicates
+      { new: true, runValidators: true, session },
+    ).populate('downvote');
+
+    await session.commitTransaction();
+    await session.endSession();
+
+    return result;
+  } catch (error) {
+    await session.abortTransaction();
+    await session.endSession();
+  }
+};
+
+const removePostDownvoteFromDB = async (
+  postId: string,
+  userData: Record<string, unknown>,
+) => {
+  const { email, _id } = userData;
+
+  const user = await User.isUserExistsByEmail(email as string);
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "User doesn't exist!");
+  }
+
+  const post = await Post.findById(postId);
+
+  if (!post) {
+    throw new AppError(httpStatus.NOT_FOUND, "Post doesn't exist!");
+  }
+
+  const userId = new Types.ObjectId(_id as string);
+
+  // Check if the user's ObjectId is in the upvote array
+  if (!post.downvote.some((downvoteId) => downvoteId.equals(userId))) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "User doesn't exist in downvote collection!",
+    );
+  }
+
+  // // Check if the user's ObjectId is in the downvote array
+  // if (post.downvote.some((downvoteId) => downvoteId.equals(userId))) {
+  //   throw new AppError(
+  //     httpStatus.BAD_REQUEST,
+  //     'User has already downvoted this post!',
+  //   );
+  // }
+
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    const result = await Post.findByIdAndUpdate(
+      postId,
+      { $pull: { downvote: _id } }, // Use $addToSet to avoid duplicates
+      { new: true, runValidators: true, session },
+    ).populate('downvote');
+
+    await session.commitTransaction();
+    await session.endSession();
+
+    return result;
+  } catch (error) {
     await session.abortTransaction();
     await session.endSession();
   }
@@ -214,6 +326,8 @@ export const PostServices = {
   getAllPostsFromDB,
   addPostUpvoteIntoDB,
   removePostUpvoteFromDB,
+  addPostDownvoteIntoDB,
+  removePostDownvoteFromDB,
   //   getSingleServiceFromDB,
   //   updateServiceIntoDB,
   //   deleteServiceFromDB,

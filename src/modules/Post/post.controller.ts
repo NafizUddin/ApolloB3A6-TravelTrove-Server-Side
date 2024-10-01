@@ -48,6 +48,20 @@ const addPostUpvote = catchAsync(async (req, res) => {
   });
 });
 
+const addPostDownvote = catchAsync(async (req, res) => {
+  const result = await PostServices.addPostDownvoteIntoDB(
+    req.params.postId,
+    req.user,
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'You gave downvote successfully',
+    data: result,
+  });
+});
+
 const removePostUpvote = catchAsync(async (req, res) => {
   const result = await PostServices.removePostUpvoteFromDB(
     req.params.postId,
@@ -58,6 +72,20 @@ const removePostUpvote = catchAsync(async (req, res) => {
     success: true,
     statusCode: httpStatus.OK,
     message: 'You removed upvote successfully',
+    data: result,
+  });
+});
+
+const removePostDownvote = catchAsync(async (req, res) => {
+  const result = await PostServices.removePostDownvoteFromDB(
+    req.params.postId,
+    req.user,
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'You removed downvote successfully',
     data: result,
   });
 });
@@ -115,6 +143,8 @@ export const PostControllers = {
   getAllPosts,
   addPostUpvote,
   removePostUpvote,
+  addPostDownvote,
+  removePostDownvote,
   //   getSinglePost,
   //   updatePost,
   //   deletePost,

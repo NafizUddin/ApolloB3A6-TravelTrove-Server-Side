@@ -23,13 +23,19 @@ router.post(
 router.post(
   '/:postId/downvote',
   auth(USER_ROLE.USER),
-  PostControllers.addPostUpvote,
+  PostControllers.addPostDownvote,
 );
 
 router.delete(
   '/:postId/upvote',
   auth(USER_ROLE.USER),
   PostControllers.removePostUpvote,
+);
+
+router.delete(
+  '/:postId/downvote',
+  auth(USER_ROLE.USER),
+  PostControllers.removePostDownvote,
 );
 
 // router.get('/:id', carServiceControllers.getSingleService);
