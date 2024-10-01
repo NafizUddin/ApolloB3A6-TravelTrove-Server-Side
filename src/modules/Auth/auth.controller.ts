@@ -3,14 +3,9 @@ import config from '../../config';
 import sendResponse from '../../utils/sendResponse';
 import catchAsync from '../../utils/catchAsync';
 import { AuthServices } from './auth.service';
-import AppError from '../../errors/appError';
 
 const registerUser = catchAsync(async (req, res) => {
-  if (!req.file) {
-    throw new AppError(400, 'Please upload an image');
-  }
-
-  const result = await AuthServices.registerUser(req.body, req.file);
+  const result = await AuthServices.registerUser(req.body);
   const { refreshToken, accessToken } = result;
 
   res.cookie('refreshToken', refreshToken, {

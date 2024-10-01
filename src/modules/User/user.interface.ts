@@ -14,6 +14,7 @@ export type TUser = {
   isVerified: boolean;
   totalUpvote: number;
   profilePhoto?: string;
+  passwordChangedAt?: Date;
   createdAt?: Date;
   updatedAt?: Date;
 };

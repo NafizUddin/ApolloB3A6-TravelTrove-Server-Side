@@ -11,7 +11,7 @@ import { TLoginUser, TSocialLoginUser } from './auth.interface';
 import AppError from '../../errors/appError';
 import { TUser } from '../User/user.interface';
 
-const registerUser = async (payload: TUser, file: any) => {
+const registerUser = async (payload: TUser) => {
   // checking if the user is exist
   const user = await User.isUserExistsByEmail(payload?.email);
 
@@ -20,7 +20,6 @@ const registerUser = async (payload: TUser, file: any) => {
   }
 
   payload.role = USER_ROLE.USER;
-  payload.profilePhoto = file?.path;
 
   // // create new user
   const newUser = await User.create(payload);
