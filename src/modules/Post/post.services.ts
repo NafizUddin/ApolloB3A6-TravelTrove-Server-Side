@@ -1,10 +1,11 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status';
 import AppError from '../../errors/appError';
 import { User } from '../User/user.model';
 import { IPost } from './post.interface';
 import { Post } from './post.model';
-import { PostQueryBuilder } from '../../builder/PostQueryBuilder';
-import { postSearchableFields } from './post.constant';
 import mongoose, { Types } from 'mongoose';
 
 const createPostIntoDB = async (
@@ -26,55 +27,61 @@ const createPostIntoDB = async (
 };
 
 const getAllPostsFromDB = async (query: Record<string, unknown>) => {
-  const { sort, ...searchQuery } = query;
+  const { sort, searchTerm, ...searchQuery } = query;
 
-  const postQuery = new PostQueryBuilder(
-    Post.find().populate('postAuthor'),
-    searchQuery,
-  )
-    .search(postSearchableFields)
-    .filter()
-    .paginate()
-    .fields();
-
-  const meta = await postQuery.countTotal();
-  let result = await postQuery.modelQuery;
-
-  console.log('Query Conditions:', postQuery.modelQuery.getQuery());
-
-  // Aggregation for sorting by upvote or downvote in ascending order
-  if (sort === 'upvote' || sort === 'downvote') {
-    result = await Post.aggregate([
-      { $match: postQuery.modelQuery.getQuery() },
-      {
-        $lookup: {
-          from: 'users', // from 'users' collection
-          localField: 'postAuthor',
-          foreignField: '_id',
-          as: 'postAuthor',
-        },
+  // Base aggregation pipeline
+  const aggregationPipeline: any[] = [
+    {
+      $lookup: {
+        from: 'users', // from 'users' collection
+        localField: 'postAuthor',
+        foreignField: '_id',
+        as: 'postAuthor',
       },
-      {
-        $addFields: {
-          upvoteCount: { $size: '$upvote' }, // Add upvote count field
-          downvoteCount: { $size: '$downvote' }, // Add downvote count field
-        },
+    },
+    {
+      $unwind: {
+        path: '$postAuthor',
+        preserveNullAndEmptyArrays: true, // Keep posts without an author
       },
-      {
-        $sort: sort === 'upvote' ? { upvoteCount: 1 } : { downvoteCount: 1 },
+    },
+    {
+      $addFields: {
+        upvoteCount: { $size: '$upvote' },
+        downvoteCount: { $size: '$downvote' },
       },
-    ]);
+    },
+  ];
 
-    // Log the result to inspect if aggregation works correctly
-    console.log('Aggregation Result:', result);
+  if (searchTerm) {
+    const searchRegex = new RegExp(searchTerm as string, 'i');
+    aggregationPipeline.push({
+      $match: {
+        $or: [
+          { title: searchRegex },
+          { category: searchRegex },
+          { 'postAuthor.name': searchRegex },
+        ],
+      },
+    } as any);
   }
 
+  // If sort is defined, add sorting logic
+  if (sort === 'upvote' || sort === 'downvote') {
+    aggregationPipeline.push({
+      $sort: sort === 'upvote' ? { upvoteCount: -1 } : { downvoteCount: 1 },
+    } as any);
+  }
+
+  // Execute the aggregation
+  const result = await Post.aggregate(aggregationPipeline);
+
   if (!result || result.length === 0) {
-    console.log('No posts found.');
     return null;
   }
 
-  return { meta, result };
+  // You can also return meta if you calculate it
+  return { result };
 };
 
 const addPostUpvoteIntoDB = async (
@@ -134,7 +141,7 @@ const addPostUpvoteIntoDB = async (
     ).populate('upvote');
 
     await User.findByIdAndUpdate(
-      _id,
+      post.postAuthor._id,
       { $inc: { totalUpvote: 1 } },
       { new: true, session },
     );
@@ -189,7 +196,7 @@ const removePostUpvoteFromDB = async (
     ).populate('upvote');
 
     await User.findByIdAndUpdate(
-      _id,
+      post.postAuthor._id,
       { $inc: { totalUpvote: -1 } },
       { new: true, session },
     );
