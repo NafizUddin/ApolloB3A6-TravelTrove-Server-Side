@@ -7,10 +7,16 @@ import { UserValidation } from './user.validation';
 
 const router = express.Router();
 
+// router.post(
+//   '/create-user',
+//   validateRequest(UserValidation.createUserValidationSchema),
+//   UserControllers.userRegister,
+// );
+
 router.post(
-  '/create-user',
-  validateRequest(UserValidation.createUserValidationSchema),
-  UserControllers.userRegister,
+  '/:followedId/follow',
+  auth(USER_ROLE.USER),
+  UserControllers.addFollowing,
 );
 
 router.get('/', auth(USER_ROLE.ADMIN), UserControllers.getAllUsers);

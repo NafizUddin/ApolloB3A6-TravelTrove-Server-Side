@@ -3,17 +3,6 @@ import sendResponse from '../../utils/sendResponse';
 import catchAsync from '../../utils/catchAsync';
 import { UserServices } from './user.services';
 
-const userRegister = catchAsync(async (req, res) => {
-  const user = await UserServices.createUser(req.body);
-
-  sendResponse(res, {
-    success: true,
-    statusCode: httpStatus.OK,
-    message: 'User Created Successfully',
-    data: user,
-  });
-});
-
 const getAllUsers = catchAsync(async (req, res) => {
   const users = await UserServices.getAllUsersFromDB(req.query);
 
@@ -36,8 +25,22 @@ const getSingleUser = catchAsync(async (req, res) => {
   });
 });
 
+const addFollowing = catchAsync(async (req, res) => {
+  const result = await UserServices.addFollowingIntoDB(
+    req.params.followedId,
+    req.user,
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'You followed successfully',
+    data: result,
+  });
+});
+
 export const UserControllers = {
   getSingleUser,
-  userRegister,
   getAllUsers,
+  addFollowing,
 };

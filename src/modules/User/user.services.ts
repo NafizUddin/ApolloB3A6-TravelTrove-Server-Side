@@ -1,13 +1,9 @@
+import httpStatus from 'http-status';
 import { QueryBuilder } from '../../builder/QueryBuilder';
+import AppError from '../../errors/appError';
 import { UserSearchableFields } from './user.constant';
-import { TUser } from './user.interface';
 import { User } from './user.model';
-
-const createUser = async (payload: TUser) => {
-  const user = await User.create(payload);
-
-  return user;
-};
+import mongoose from 'mongoose';
 
 const getAllUsersFromDB = async (query: Record<string, unknown>) => {
   const userQuery = new QueryBuilder(User.find(), query)
@@ -33,8 +29,59 @@ const getSingleUserFromDB = async (id: string) => {
   return user;
 };
 
+const addFollowingIntoDB = async (
+  followedId: string,
+  userData: Record<string, unknown>,
+) => {
+  const { email, _id } = userData;
+
+  const user = await User.isUserExistsByEmail(email as string);
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "User doesn't exist!");
+  }
+
+  const isAlreadyFollowing = await User.findOne({
+    _id,
+    following: followedId,
+  });
+
+  if (isAlreadyFollowing) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'User is already following this profile!',
+    );
+  }
+
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    const result = await User.findByIdAndUpdate(
+      _id,
+      { $addToSet: { following: followedId } }, // Use $addToSet to avoid duplicates
+      { new: true, runValidators: true, session },
+    ).populate('following');
+
+    await User.findByIdAndUpdate(
+      followedId,
+      { $addToSet: { followers: _id } }, // Use $addToSet to avoid duplicates
+      { new: true, runValidators: true, session },
+    ).populate('followers');
+
+    await session.commitTransaction();
+    await session.endSession();
+
+    return result;
+  } catch (error) {
+    await session.abortTransaction();
+    await session.endSession();
+  }
+};
+
 export const UserServices = {
-  createUser,
   getAllUsersFromDB,
   getSingleUserFromDB,
+  addFollowingIntoDB,
 };
