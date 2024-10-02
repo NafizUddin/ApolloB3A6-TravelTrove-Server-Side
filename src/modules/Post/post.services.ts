@@ -87,6 +87,15 @@ const addPostUpvoteIntoDB = async (
   try {
     session.startTransaction();
 
+    // Check if the user's ObjectId is in the downvote array
+    if (post.downvote.some((downvoteId) => downvoteId.equals(userId))) {
+      await Post.findByIdAndUpdate(
+        postId,
+        { $pull: { downvote: _id } }, // Use $pull to avoid duplicates
+        { new: true, runValidators: true, session },
+      );
+    }
+
     const result = await Post.findByIdAndUpdate(
       postId,
       { $addToSet: { upvote: _id } }, // Use $addToSet to avoid duplicates
@@ -136,14 +145,6 @@ const removePostUpvoteFromDB = async (
       "User doesn't exist in upvote collection!",
     );
   }
-
-  // // Check if the user's ObjectId is in the downvote array
-  // if (post.downvote.some((downvoteId) => downvoteId.equals(userId))) {
-  //   throw new AppError(
-  //     httpStatus.BAD_REQUEST,
-  //     'User has already downvoted this post!',
-  //   );
-  // }
 
   const session = await mongoose.startSession();
 
@@ -200,18 +201,18 @@ const addPostDownvoteIntoDB = async (
     );
   }
 
-  // // Check if the user's ObjectId is in the downvote array
-  // if (post.downvote.some((downvoteId) => downvoteId.equals(userId))) {
-  //   throw new AppError(
-  //     httpStatus.BAD_REQUEST,
-  //     'User has already downvoted this post!',
-  //   );
-  // }
-
   const session = await mongoose.startSession();
 
   try {
     session.startTransaction();
+
+    if (post.upvote.some((upvoteId) => upvoteId.equals(userId))) {
+      await Post.findByIdAndUpdate(
+        postId,
+        { $pull: { upvote: _id } }, // Use $pull to avoid duplicates
+        { new: true, runValidators: true, session },
+      );
+    }
 
     const result = await Post.findByIdAndUpdate(
       postId,
@@ -256,14 +257,6 @@ const removePostDownvoteFromDB = async (
       "User doesn't exist in downvote collection!",
     );
   }
-
-  // // Check if the user's ObjectId is in the downvote array
-  // if (post.downvote.some((downvoteId) => downvoteId.equals(userId))) {
-  //   throw new AppError(
-  //     httpStatus.BAD_REQUEST,
-  //     'User has already downvoted this post!',
-  //   );
-  // }
 
   const session = await mongoose.startSession();
 
