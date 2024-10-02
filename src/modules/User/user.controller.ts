@@ -39,8 +39,23 @@ const addFollowing = catchAsync(async (req, res) => {
   });
 });
 
+const removeFollowing = catchAsync(async (req, res) => {
+  const result = await UserServices.removeFollowingFromDB(
+    req.params.followedId,
+    req.user,
+  );
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'You unfollowed successfully',
+    data: result,
+  });
+});
+
 export const UserControllers = {
   getSingleUser,
   getAllUsers,
   addFollowing,
+  removeFollowing,
 };

@@ -19,6 +19,12 @@ router.post(
   UserControllers.addFollowing,
 );
 
+router.delete(
+  '/:followedId/follow',
+  auth(USER_ROLE.USER),
+  UserControllers.removeFollowing,
+);
+
 router.get('/', auth(USER_ROLE.ADMIN), UserControllers.getAllUsers);
 router.get('/:id', UserControllers.getSingleUser);
 
