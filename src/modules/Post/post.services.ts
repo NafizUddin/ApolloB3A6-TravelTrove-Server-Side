@@ -26,20 +26,51 @@ const createPostIntoDB = async (
 };
 
 const getAllPostsFromDB = async (query: Record<string, unknown>) => {
+  const { sort, ...searchQuery } = query;
+
   const postQuery = new PostQueryBuilder(
     Post.find().populate('postAuthor'),
-    query,
+    searchQuery,
   )
     .search(postSearchableFields)
     .filter()
-    .sort()
     .paginate()
     .fields();
 
   const meta = await postQuery.countTotal();
-  const result = await postQuery.modelQuery;
+  let result = await postQuery.modelQuery;
 
-  if (result.length === 0) {
+  console.log('Query Conditions:', postQuery.modelQuery.getQuery());
+
+  // Aggregation for sorting by upvote or downvote in ascending order
+  if (sort === 'upvote' || sort === 'downvote') {
+    result = await Post.aggregate([
+      { $match: postQuery.modelQuery.getQuery() },
+      {
+        $lookup: {
+          from: 'users', // from 'users' collection
+          localField: 'postAuthor',
+          foreignField: '_id',
+          as: 'postAuthor',
+        },
+      },
+      {
+        $addFields: {
+          upvoteCount: { $size: '$upvote' }, // Add upvote count field
+          downvoteCount: { $size: '$downvote' }, // Add downvote count field
+        },
+      },
+      {
+        $sort: sort === 'upvote' ? { upvoteCount: 1 } : { downvoteCount: 1 },
+      },
+    ]);
+
+    // Log the result to inspect if aggregation works correctly
+    console.log('Aggregation Result:', result);
+  }
+
+  if (!result || result.length === 0) {
+    console.log('No posts found.');
     return null;
   }
 
@@ -279,15 +310,15 @@ const removePostDownvoteFromDB = async (
   }
 };
 
-// const getSingleServiceFromDB = async (id: string) => {
-//   const singleService = await CarService.findById(id);
+const getSinglePostFromDB = async (id: string) => {
+  const singlePost = await Post.findById(id).populate('postAuthor');
 
-//   if (singleService?.isDeleted) {
-//     return null;
-//   } else {
-//     return singleService;
-//   }
-// };
+  if (!singlePost) {
+    return null;
+  } else {
+    return singlePost;
+  }
+};
 
 // const updateServiceIntoDB = async (
 //   payload: Partial<ICarService>,
@@ -321,7 +352,7 @@ export const PostServices = {
   removePostUpvoteFromDB,
   addPostDownvoteIntoDB,
   removePostDownvoteFromDB,
-  //   getSingleServiceFromDB,
+  getSinglePostFromDB,
   //   updateServiceIntoDB,
   //   deleteServiceFromDB,
 };

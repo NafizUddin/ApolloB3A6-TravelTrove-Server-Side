@@ -90,27 +90,27 @@ const removePostDownvote = catchAsync(async (req, res) => {
   });
 });
 
-// const getSinglePost = catchAsync(async (req, res) => {
-//   const id = req.params.id;
+const getSinglePost = catchAsync(async (req, res) => {
+  const id = req.params.id;
 
-//   const result = await ServicesOfCarService.getSingleServiceFromDB(id);
+  const result = await PostServices.getSinglePostFromDB(id);
 
-//   if (result === null) {
-//     return sendResponse(res, {
-//       success: false,
-//       statusCode: httpStatus.NOT_FOUND,
-//       message: 'No Data Found!',
-//       data: [],
-//     });
-//   }
+  if (result === null) {
+    return sendResponse(res, {
+      success: false,
+      statusCode: httpStatus.NOT_FOUND,
+      message: 'No Data Found!',
+      data: [],
+    });
+  }
 
-//   sendResponse(res, {
-//     success: true,
-//     statusCode: httpStatus.OK,
-//     message: 'Service retrieved successfully',
-//     data: result,
-//   });
-// });
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Post retrieved successfully',
+    data: result,
+  });
+});
 
 // const updatePost = catchAsync(async (req, res) => {
 //   const id = req.params.id;
@@ -145,7 +145,7 @@ export const PostControllers = {
   removePostUpvote,
   addPostDownvote,
   removePostDownvote,
-  //   getSinglePost,
+  getSinglePost,
   //   updatePost,
   //   deletePost,
 };

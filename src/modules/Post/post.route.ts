@@ -38,7 +38,7 @@ router.delete(
   PostControllers.removePostDownvote,
 );
 
-// router.get('/:id', carServiceControllers.getSingleService);
+router.get('/:id', PostControllers.getSinglePost);
 
 // router.put(
 //   '/:id',

@@ -51,7 +51,14 @@ export class PostQueryBuilder<T> {
       sortBy = this.query.sortBy as string;
     }
 
-    this.modelQuery = this.modelQuery.sort(sortBy);
+    if (sortBy === 'upvote') {
+      this.modelQuery = this.modelQuery.sort({ upvote: 1 });
+    } else if (sortBy === 'downvote') {
+      this.modelQuery = this.modelQuery.sort({ downvote: 1 });
+    } else {
+      this.modelQuery = this.modelQuery.sort(sortBy);
+    }
+
     return this;
   }
 
