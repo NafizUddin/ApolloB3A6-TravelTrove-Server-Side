@@ -22,8 +22,29 @@ const createPostIntoDB = async (
 
   const postData = { ...payload, postAuthor: user?._id };
 
-  const result = (await Post.create(postData)).populate('postAuthor');
-  return result;
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    const [createdPost] = await Post.create([{ ...postData }], { session });
+
+    const result = await createdPost.populate([{ path: 'postAuthor' }]);
+
+    await User.findByIdAndUpdate(
+      user._id,
+      { $inc: { postCount: 1 } },
+      { new: true, session },
+    );
+
+    await session.commitTransaction();
+    await session.endSession();
+
+    return result;
+  } catch (error) {
+    await session.abortTransaction();
+    await session.endSession();
+  }
 };
 
 const getAllPostsFromDB = async (query: Record<string, unknown>) => {

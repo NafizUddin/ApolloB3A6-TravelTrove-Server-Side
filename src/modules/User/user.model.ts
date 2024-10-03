@@ -57,6 +57,10 @@ const userSchema = new Schema<TUser, IUserModel>(
       type: Number,
       default: 0,
     },
+    postCount: {
+      type: Number,
+      default: 0,
+    },
     passwordChangedAt: {
       type: Date,
     },
