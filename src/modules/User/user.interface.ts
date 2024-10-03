@@ -13,7 +13,7 @@ export type TUser = {
   following: Types.ObjectId[];
   isVerified: boolean;
   totalUpvote: number;
-  postCount?: number;
+  postCount: number;
   profilePhoto?: string;
   passwordChangedAt?: Date;
   createdAt?: Date;

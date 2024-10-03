@@ -33,6 +33,11 @@ const registerUser = async (payload: TUser) => {
     profilePhoto: newUser.profilePhoto,
     role: newUser.role,
     status: newUser.status,
+    followers: newUser.followers,
+    following: newUser.following,
+    isVerified: newUser.isVerified,
+    totalUpvote: newUser.totalUpvote,
+    postCount: newUser.postCount,
   };
 
   const accessToken = createToken(
@@ -75,6 +80,11 @@ const loginUser = async (payload: TLoginUser) => {
     profilePhoto: user.profilePhoto,
     role: user.role,
     status: user.status,
+    followers: user.followers,
+    following: user.following,
+    isVerified: user.isVerified,
+    totalUpvote: user.totalUpvote,
+    postCount: user.postCount,
   };
 
   const accessToken = createToken(
@@ -114,6 +124,11 @@ const socialLogin = async (payload: TSocialLoginUser) => {
       profilePhoto: newUser.profilePhoto,
       role: newUser.role,
       status: newUser.status,
+      followers: newUser.followers,
+      following: newUser.following,
+      isVerified: newUser.isVerified,
+      totalUpvote: newUser.totalUpvote,
+      postCount: newUser.postCount,
     };
 
     const accessToken = createToken(
