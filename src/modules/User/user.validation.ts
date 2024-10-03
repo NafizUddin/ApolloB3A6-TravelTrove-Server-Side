@@ -28,6 +28,10 @@ const updateUserValidationSchema = z.object({
     email: z.string().email().optional(),
     password: z.string().optional(),
     status: z.nativeEnum(USER_STATUS).optional(),
+    profilePhoto: z
+      .string()
+      .url('Image URL is required and must be valid')
+      .optional(),
   }),
 });
 

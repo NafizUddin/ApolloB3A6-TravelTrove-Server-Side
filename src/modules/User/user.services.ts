@@ -4,6 +4,7 @@ import AppError from '../../errors/appError';
 import { UserSearchableFields } from './user.constant';
 import { User } from './user.model';
 import mongoose from 'mongoose';
+import { TUser } from './user.interface';
 
 const getAllUsersFromDB = async (query: Record<string, unknown>) => {
   const userQuery = new QueryBuilder(User.find(), query)
@@ -131,9 +132,28 @@ const removeFollowingFromDB = async (
   }
 };
 
+const updateUserIntoDB = async (
+  payload: Partial<TUser>,
+  id: string,
+  userData: Record<string, unknown>,
+) => {
+  const { email } = userData;
+
+  const user = await User.isUserExistsByEmail(email as string);
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "User doesn't exist!");
+  }
+
+  const result = await User.findByIdAndUpdate(id, payload, { new: true });
+
+  return result;
+};
+
 export const UserServices = {
   getAllUsersFromDB,
   getSingleUserFromDB,
   addFollowingIntoDB,
   removeFollowingFromDB,
+  updateUserIntoDB,
 };

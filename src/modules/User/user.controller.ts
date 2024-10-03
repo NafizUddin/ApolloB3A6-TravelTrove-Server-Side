@@ -53,9 +53,23 @@ const removeFollowing = catchAsync(async (req, res) => {
   });
 });
 
+const updateUser = catchAsync(async (req, res) => {
+  const id = req.params.id;
+
+  const result = await UserServices.updateUserIntoDB(req.body, id, req.user);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'User updated successfully',
+    data: result,
+  });
+});
+
 export const UserControllers = {
   getSingleUser,
   getAllUsers,
   addFollowing,
   removeFollowing,
+  updateUser,
 };

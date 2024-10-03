@@ -7,12 +7,6 @@ import { UserValidation } from './user.validation';
 
 const router = express.Router();
 
-// router.post(
-//   '/create-user',
-//   validateRequest(UserValidation.createUserValidationSchema),
-//   UserControllers.userRegister,
-// );
-
 router.post(
   '/:followedId/follow',
   auth(USER_ROLE.USER),
@@ -23,6 +17,13 @@ router.delete(
   '/:followedId/follow',
   auth(USER_ROLE.USER),
   UserControllers.removeFollowing,
+);
+
+router.put(
+  '/:id',
+  auth(USER_ROLE.USER),
+  validateRequest(UserValidation.updateUserValidationSchema),
+  UserControllers.updateUser,
 );
 
 router.get('/', auth(USER_ROLE.ADMIN), UserControllers.getAllUsers);
