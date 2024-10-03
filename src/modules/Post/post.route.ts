@@ -38,20 +38,24 @@ router.delete(
   PostControllers.removePostDownvote,
 );
 
-router.get('/:id', PostControllers.getSinglePost);
+router.get(
+  '/:id',
+  auth(USER_ROLE.ADMIN, USER_ROLE.USER),
+  PostControllers.getSinglePost,
+);
 
-// router.put(
-//   '/:id',
-//   auth(USER_ROLE.admin),
-//   validateRequest(carServiceValidations.updateCarServiceValidationSchema),
-//   carServiceControllers.updateService,
-// );
+router.put(
+  '/:id',
+  auth(USER_ROLE.USER),
+  validateRequest(PostValidations.updatePostValidationSchema),
+  PostControllers.updatePost,
+);
 
-// router.delete(
-//   '/:id',
-//   auth(USER_ROLE.admin),
-//   carServiceControllers.deleteService,
-// );
+router.delete(
+  '/:id',
+  auth(USER_ROLE.ADMIN, USER_ROLE.USER),
+  PostControllers.deletePost,
+);
 
 router.get('/', PostControllers.getAllPosts);
 

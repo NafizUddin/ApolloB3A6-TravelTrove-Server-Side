@@ -112,31 +112,31 @@ const getSinglePost = catchAsync(async (req, res) => {
   });
 });
 
-// const updatePost = catchAsync(async (req, res) => {
-//   const id = req.params.id;
+const updatePost = catchAsync(async (req, res) => {
+  const id = req.params.id;
 
-//   const result = await ServicesOfCarService.updateServiceIntoDB(req.body, id);
+  const result = await PostServices.updatePostIntoDB(req.body, id);
 
-//   sendResponse(res, {
-//     success: true,
-//     statusCode: httpStatus.OK,
-//     message: 'Service updated successfully',
-//     data: result,
-//   });
-// });
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Post updated successfully',
+    data: result,
+  });
+});
 
-// const deletePost = catchAsync(async (req, res) => {
-//   const id = req.params.id;
+const deletePost = catchAsync(async (req, res) => {
+  const id = req.params.id;
 
-//   const result = await ServicesOfCarService.deleteServiceFromDB(id);
+  const result = await PostServices.deletePostFromDB(id);
 
-//   sendResponse(res, {
-//     success: true,
-//     statusCode: httpStatus.OK,
-//     message: 'Service deleted successfully',
-//     data: result,
-//   });
-// });
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Post deleted successfully',
+    data: result,
+  });
+});
 
 export const PostControllers = {
   createPost,
@@ -146,6 +146,6 @@ export const PostControllers = {
   addPostDownvote,
   removePostDownvote,
   getSinglePost,
-  //   updatePost,
-  //   deletePost,
+  updatePost,
+  deletePost,
 };

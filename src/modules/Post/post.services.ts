@@ -327,30 +327,18 @@ const getSinglePostFromDB = async (id: string) => {
   }
 };
 
-// const updateServiceIntoDB = async (
-//   payload: Partial<ICarService>,
-//   id: string,
-// ) => {
-//   const result = await CarService.findByIdAndUpdate(id, payload, {
-//     new: true,
-//   });
+const updatePostIntoDB = async (payload: Partial<IPost>, id: string) => {
+  const result = await Post.findByIdAndUpdate(id, payload, {
+    new: true,
+  });
 
-//   return result;
-// };
+  return result;
+};
 
-// const deleteServiceFromDB = async (id: string) => {
-//   const result = await CarService.findByIdAndUpdate(
-//     id,
-//     {
-//       isDeleted: true,
-//     },
-//     {
-//       new: true,
-//     },
-//   );
-
-//   return result;
-// };
+const deletePostFromDB = async (id: string) => {
+  const result = await Post.findByIdAndDelete(id);
+  return result;
+};
 
 export const PostServices = {
   createPostIntoDB,
@@ -360,6 +348,6 @@ export const PostServices = {
   addPostDownvoteIntoDB,
   removePostDownvoteFromDB,
   getSinglePostFromDB,
-  //   updateServiceIntoDB,
-  //   deleteServiceFromDB,
+  updatePostIntoDB,
+  deletePostFromDB,
 };
