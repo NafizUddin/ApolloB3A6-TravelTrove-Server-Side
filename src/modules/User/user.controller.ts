@@ -73,7 +73,8 @@ const startPremium = catchAsync(async (req, res) => {
     success: true,
     statusCode: httpStatus.OK,
     message: 'Premium Subscription successful!',
-    data: result,
+    data: result?.result,
+    paymentSession: result?.paymentSession,
   });
 });
 

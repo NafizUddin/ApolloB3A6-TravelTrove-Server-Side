@@ -36,6 +36,7 @@ const getPremiumValidationSchema = z.object({
         required_error: 'Premium End Date is required',
       })
       .trim(),
+    premiumCharge: z.number().nonnegative().min(1),
   }),
 });
 

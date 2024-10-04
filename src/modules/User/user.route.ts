@@ -27,7 +27,7 @@ router.put(
 );
 
 router.put(
-  '/start-premium',
+  '/premium/start-premium',
   auth(USER_ROLE.USER),
   validateRequest(UserValidation.getPremiumValidationSchema),
   UserControllers.startPremium,

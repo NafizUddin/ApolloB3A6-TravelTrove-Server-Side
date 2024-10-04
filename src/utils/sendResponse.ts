@@ -8,6 +8,7 @@ const sendResponse = <T>(res: Response, data: TResponse<T>) => {
     message: data?.message,
     meta: data?.meta,
     data: data?.data,
+    paymentSession: data?.paymentSession,
   });
 };
 

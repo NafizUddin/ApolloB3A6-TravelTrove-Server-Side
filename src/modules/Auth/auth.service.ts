@@ -38,6 +38,8 @@ const registerUser = async (payload: TUser) => {
     isVerified: newUser.isVerified,
     totalUpvote: newUser.totalUpvote,
     postCount: newUser.postCount,
+    premiumStart: newUser.premiumStart,
+    premiumEnd: newUser.premiumEnd,
   };
 
   const accessToken = createToken(
@@ -85,6 +87,8 @@ const loginUser = async (payload: TLoginUser) => {
     isVerified: user.isVerified,
     totalUpvote: user.totalUpvote,
     postCount: user.postCount,
+    premiumStart: user.premiumStart,
+    premiumEnd: user.premiumEnd,
   };
 
   const accessToken = createToken(
@@ -129,6 +133,8 @@ const socialLogin = async (payload: TSocialLoginUser) => {
       isVerified: newUser.isVerified,
       totalUpvote: newUser.totalUpvote,
       postCount: newUser.postCount,
+      premiumStart: newUser.premiumStart,
+      premiumEnd: newUser.premiumEnd,
     };
 
     const accessToken = createToken(
@@ -158,6 +164,13 @@ const socialLogin = async (payload: TSocialLoginUser) => {
     profilePhoto: user.profilePhoto,
     role: user.role,
     status: user.status,
+    followers: user.followers,
+    following: user.following,
+    isVerified: user.isVerified,
+    totalUpvote: user.totalUpvote,
+    postCount: user.postCount,
+    premiumStart: user.premiumStart,
+    premiumEnd: user.premiumEnd,
   };
 
   const accessToken = createToken(
@@ -244,6 +257,13 @@ const refreshToken = async (token: string) => {
     profilePhoto: user.profilePhoto,
     role: user.role,
     status: user.status,
+    followers: user.followers,
+    following: user.following,
+    isVerified: user.isVerified,
+    totalUpvote: user.totalUpvote,
+    postCount: user.postCount,
+    premiumStart: user.premiumStart,
+    premiumEnd: user.premiumEnd,
   };
 
   const accessToken = createToken(

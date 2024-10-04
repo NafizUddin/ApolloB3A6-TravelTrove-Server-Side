@@ -76,6 +76,9 @@ const userSchema = new Schema<TUser, IUserModel>(
     premiumEnd: {
       type: String,
     },
+    premiumCharge: {
+      type: Number,
+    },
   },
   {
     timestamps: true,

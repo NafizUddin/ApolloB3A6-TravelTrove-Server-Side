@@ -1,7 +1,7 @@
 import httpStatus from 'http-status';
 import { QueryBuilder } from '../../builder/QueryBuilder';
 import AppError from '../../errors/appError';
-import { UserSearchableFields } from './user.constant';
+import { USER_STATUS, UserSearchableFields } from './user.constant';
 import { User } from './user.model';
 import mongoose from 'mongoose';
 import { TUser } from './user.interface';
@@ -163,12 +163,20 @@ const startPremiumIntoDB = async (
     throw new AppError(httpStatus.NOT_FOUND, "User doesn't exist!");
   }
 
+  const updatedUserInfo = {
+    ...payload,
+    status: USER_STATUS.PREMIUM,
+    isVerified: true,
+  };
+
   const session = await mongoose.startSession();
 
   try {
     session.startTransaction();
 
-    await User.findByIdAndUpdate(_id, payload, { new: true });
+    const result = await User.findByIdAndUpdate(_id, updatedUserInfo, {
+      new: true,
+    });
 
     const paymentData = {
       transactionId: payload?.transactionId,
@@ -182,7 +190,7 @@ const startPremiumIntoDB = async (
     await session.commitTransaction();
     await session.endSession();
 
-    return paymentSession;
+    return { paymentSession, result };
   } catch (error) {
     await session.abortTransaction();
     await session.endSession();

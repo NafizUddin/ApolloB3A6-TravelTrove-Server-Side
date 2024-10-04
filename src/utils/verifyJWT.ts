@@ -3,6 +3,7 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import AppError from '../errors/appError';
 import { USER_ROLE, USER_STATUS } from '../modules/User/user.constant';
+import { Types } from 'mongoose';
 
 export const createToken = (
   jwtPayload: {
@@ -12,6 +13,13 @@ export const createToken = (
     role: keyof typeof USER_ROLE;
     status: keyof typeof USER_STATUS;
     profilePhoto?: string;
+    followers: Types.ObjectId[];
+    following: Types.ObjectId[];
+    isVerified: boolean;
+    totalUpvote: number;
+    postCount: number;
+    premiumStart?: string;
+    premiumEnd?: string;
   },
   secret: string,
   expiresIn: string,
