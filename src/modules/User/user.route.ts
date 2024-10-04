@@ -26,6 +26,13 @@ router.put(
   UserControllers.updateUser,
 );
 
+router.put(
+  '/start-premium',
+  auth(USER_ROLE.USER),
+  validateRequest(UserValidation.getPremiumValidationSchema),
+  UserControllers.startPremium,
+);
+
 router.get('/', auth(USER_ROLE.ADMIN), UserControllers.getAllUsers);
 router.get('/:id', UserControllers.getSingleUser);
 

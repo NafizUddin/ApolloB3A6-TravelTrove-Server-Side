@@ -66,10 +66,22 @@ const updateUser = catchAsync(async (req, res) => {
   });
 });
 
+const startPremium = catchAsync(async (req, res) => {
+  const result = await UserServices.startPremiumIntoDB(req.body, req.user);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Premium Subscription successful!',
+    data: result,
+  });
+});
+
 export const UserControllers = {
   getSingleUser,
   getAllUsers,
   addFollowing,
   removeFollowing,
   updateUser,
+  startPremium,
 };

@@ -64,6 +64,18 @@ const userSchema = new Schema<TUser, IUserModel>(
     passwordChangedAt: {
       type: Date,
     },
+    transactionId: {
+      type: String,
+    },
+    paymentStatus: {
+      type: String,
+    },
+    premiumStart: {
+      type: String,
+    },
+    premiumEnd: {
+      type: String,
+    },
   },
   {
     timestamps: true,

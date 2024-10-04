@@ -5,6 +5,7 @@ import { UserSearchableFields } from './user.constant';
 import { User } from './user.model';
 import mongoose from 'mongoose';
 import { TUser } from './user.interface';
+import { initiatePayment } from '../../utils/payment';
 
 const getAllUsersFromDB = async (query: Record<string, unknown>) => {
   const userQuery = new QueryBuilder(User.find(), query)
@@ -150,10 +151,49 @@ const updateUserIntoDB = async (
   return result;
 };
 
+const startPremiumIntoDB = async (
+  payload: Partial<TUser>,
+  userData: Record<string, unknown>,
+) => {
+  const { email, _id } = userData;
+
+  const user = await User.isUserExistsByEmail(email as string);
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "User doesn't exist!");
+  }
+
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    await User.findByIdAndUpdate(_id, payload, { new: true });
+
+    const paymentData = {
+      transactionId: payload?.transactionId,
+      amount: payload?.premiumCharge,
+      customerName: user.name,
+      customerEmail: user.email,
+    };
+
+    const paymentSession = await initiatePayment(paymentData);
+
+    await session.commitTransaction();
+    await session.endSession();
+
+    return paymentSession;
+  } catch (error) {
+    await session.abortTransaction();
+    await session.endSession();
+  }
+};
+
 export const UserServices = {
   getAllUsersFromDB,
   getSingleUserFromDB,
   addFollowingIntoDB,
   removeFollowingFromDB,
   updateUserIntoDB,
+  startPremiumIntoDB,
 };

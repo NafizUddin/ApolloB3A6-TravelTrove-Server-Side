@@ -1,26 +1,6 @@
 import { z } from 'zod';
 import { USER_ROLE, USER_STATUS } from './user.constant';
 
-// const createUserValidationSchema = z.object({
-//   body: z.object({
-//     name: z.string({
-//       required_error: 'Name is required',
-//     }),
-//     role: z.nativeEnum(USER_ROLE),
-//     email: z
-//       .string({
-//         required_error: 'Email is required',
-//       })
-//       .email({
-//         message: 'Invalid email',
-//       }),
-//     password: z.string({
-//       required_error: 'Password is required',
-//     }),
-//     status: z.nativeEnum(USER_STATUS).default(USER_STATUS.ACTIVE),
-//   }),
-// });
-
 const updateUserValidationSchema = z.object({
   body: z.object({
     name: z.string().optional(),
@@ -35,7 +15,31 @@ const updateUserValidationSchema = z.object({
   }),
 });
 
+const getPremiumValidationSchema = z.object({
+  body: z.object({
+    transactionId: z.string({
+      required_error: 'TransactionId is required',
+    }),
+    paymentStatus: z
+      .string({
+        required_error: 'Payment Status is required',
+        invalid_type_error: 'Payment Status must be a string',
+      })
+      .trim(),
+    premiumStart: z
+      .string({
+        required_error: 'Premium Start Date is required',
+      })
+      .trim(),
+    premiumEnd: z
+      .string({
+        required_error: 'Premium End Date is required',
+      })
+      .trim(),
+  }),
+});
+
 export const UserValidation = {
-  // createUserValidationSchema,
   updateUserValidationSchema,
+  getPremiumValidationSchema,
 };
