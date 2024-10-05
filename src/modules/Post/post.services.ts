@@ -7,6 +7,8 @@ import { User } from '../User/user.model';
 import { IPost } from './post.interface';
 import { Post } from './post.model';
 import mongoose, { Types } from 'mongoose';
+import { QueryBuilder } from '../../builder/QueryBuilder';
+import { populate } from 'dotenv';
 
 const createPostIntoDB = async (
   payload: Partial<IPost>,
@@ -348,6 +350,33 @@ const getSinglePostFromDB = async (id: string) => {
   }
 };
 
+const getAllPostsInDashboard = async (
+  query: Record<string, unknown>,
+  userData: Record<string, unknown>,
+) => {
+  const { email } = userData;
+
+  const user = await User.isUserExistsByEmail(email as string);
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "User doesn't exist!");
+  }
+
+  const postQuery = new QueryBuilder(Post.find().populate('postAuthor'), query)
+    .filter()
+    .sort()
+    .paginate();
+
+  const meta = await postQuery.countTotal();
+  const result = await postQuery.modelQuery;
+
+  if (result.length === 0) {
+    return null;
+  }
+
+  return { meta, result };
+};
+
 const updatePostIntoDB = async (payload: Partial<IPost>, id: string) => {
   const result = await Post.findByIdAndUpdate(id, payload, {
     new: true,
@@ -369,6 +398,7 @@ export const PostServices = {
   addPostDownvoteIntoDB,
   removePostDownvoteFromDB,
   getSinglePostFromDB,
+  getAllPostsInDashboard,
   updatePostIntoDB,
   deletePostFromDB,
 };

@@ -34,6 +34,27 @@ const getAllPosts = catchAsync(async (req, res) => {
   });
 });
 
+const getAllPostsInDashboard = catchAsync(async (req, res) => {
+  const result = await PostServices.getAllPostsInDashboard(req.query, req.user);
+
+  if (result === null) {
+    return sendResponse(res, {
+      success: false,
+      statusCode: httpStatus.NOT_FOUND,
+      message: 'No Data Found',
+      data: [],
+    });
+  }
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Posts retrieved successfully',
+    data: result.result,
+    meta: result.meta,
+  });
+});
+
 const addPostUpvote = catchAsync(async (req, res) => {
   const result = await PostServices.addPostUpvoteIntoDB(
     req.params.postId,
@@ -146,6 +167,7 @@ export const PostControllers = {
   addPostDownvote,
   removePostDownvote,
   getSinglePost,
+  getAllPostsInDashboard,
   updatePost,
   deletePost,
 };

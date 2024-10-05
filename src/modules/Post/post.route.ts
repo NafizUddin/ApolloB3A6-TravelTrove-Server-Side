@@ -59,4 +59,10 @@ router.delete(
 
 router.get('/', PostControllers.getAllPosts);
 
+router.get(
+  '/dashboard/users',
+  auth(USER_ROLE.USER, USER_ROLE.ADMIN),
+  PostControllers.getAllPostsInDashboard,
+);
+
 export const PostRoutes = router;
