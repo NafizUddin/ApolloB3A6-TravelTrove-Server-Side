@@ -69,15 +69,19 @@ const userSchema = new Schema<TUser, IUserModel>(
     },
     paymentStatus: {
       type: String,
+      default: 'N/A',
     },
     premiumStart: {
       type: String,
+      default: 'N/A',
     },
     premiumEnd: {
       type: String,
+      default: 'N/A',
     },
     premiumCharge: {
       type: Number,
+      default: 0,
     },
   },
   {
@@ -109,7 +113,10 @@ userSchema.post('save', function (doc, next) {
 });
 
 userSchema.statics.isUserExistsByEmail = async function (email: string) {
-  return await User.findOne({ email }).select('+password');
+  return await User.findOne({ email })
+    .select('+password')
+    .populate('followers')
+    .populate('following');
 };
 
 userSchema.statics.isPasswordMatched = async function (
