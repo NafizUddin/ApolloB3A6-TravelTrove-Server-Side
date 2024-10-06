@@ -89,21 +89,22 @@ const getAllPostsFromDB = async (query: Record<string, unknown>) => {
     } as any);
   }
 
-  // If sort is defined, add sorting logic
   if (sort === 'upvote' || sort === 'downvote') {
     aggregationPipeline.push({
       $sort: sort === 'upvote' ? { upvoteCount: -1 } : { downvoteCount: 1 },
     } as any);
+  } else {
+    aggregationPipeline.push({
+      $sort: { createdAt: -1 },
+    } as any);
   }
 
-  // Execute the aggregation
   const result = await Post.aggregate(aggregationPipeline);
 
   if (!result || result.length === 0) {
     return null;
   }
 
-  // You can also return meta if you calculate it
   return { result };
 };
 
