@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import nodemailer from 'nodemailer';
 import config from '../config';
 
@@ -7,16 +8,19 @@ export const sendEmail = async (to: string, resetLink: string) => {
     port: 587,
     secure: config.NODE_ENV === 'production',
     auth: {
+      // user: 'nafizuddin.ctg@gmail.com',
+      // pass: 'kefa csom hkjw azf',
       user: 'nafizuddin.ctg@gmail.com',
-      pass: 'kefa csom hkjw azf',
+      pass: 'bqzx idsb icvu ivpk',
     },
   });
 
-  await transporter.sendMail({
-    from: '"TravelTrove Support" <nafizuddin.ctg@gmail.com>', // sender address
-    to, // receiver address
-    subject: 'Password Reset Request', // subject
-    text: `Dear User,
+  try {
+    await transporter.sendMail({
+      from: 'nafizuddin.ctg@gmail.com', // sender address
+      to, // receiver address
+      subject: 'Password Reset Request', // subject
+      text: `Dear User,
 
       We received a request to reset your password for your TravelTrove account. Please click the link below to reset your password. This link will be valid for 10 minutes.
 
@@ -27,7 +31,7 @@ export const sendEmail = async (to: string, resetLink: string) => {
      Thank you,
      The TravelTrove Team`, // plain text body
 
-    html: `
+      html: `
       <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
         <h2 style="color: #333;">Password Reset Request</h2>
         <p>Dear User,</p>
@@ -40,5 +44,8 @@ export const sendEmail = async (to: string, resetLink: string) => {
           <p>TravelTrove, Inc. | 1234 Street Address | City, State ZIP</p>
         </footer>
       </div>`, // HTML body
-  });
+    });
+  } catch (error) {
+    console.error('Error sending email:', error);
+  }
 };
