@@ -8,7 +8,6 @@ import { IPost } from './post.interface';
 import { Post } from './post.model';
 import mongoose, { Types } from 'mongoose';
 import { QueryBuilder } from '../../builder/QueryBuilder';
-import { populate } from 'dotenv';
 
 const createPostIntoDB = async (
   payload: Partial<IPost>,
@@ -386,9 +385,39 @@ const updatePostIntoDB = async (payload: Partial<IPost>, id: string) => {
   return result;
 };
 
-const deletePostFromDB = async (id: string) => {
-  const result = await Post.findByIdAndDelete(id);
-  return result;
+const deletePostFromDB = async (
+  id: string,
+  userData: Record<string, unknown>,
+) => {
+  const { email, _id } = userData;
+
+  const user = await User.isUserExistsByEmail(email as string);
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "User doesn't exist!");
+  }
+
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    const result = await Post.findByIdAndDelete(id);
+
+    await User.findByIdAndUpdate(
+      _id,
+      { $inc: { postCount: -1 } },
+      { new: true, session },
+    );
+
+    await session.commitTransaction();
+    await session.endSession();
+
+    return result;
+  } catch (error) {
+    await session.abortTransaction();
+    await session.endSession();
+  }
 };
 
 export const PostServices = {

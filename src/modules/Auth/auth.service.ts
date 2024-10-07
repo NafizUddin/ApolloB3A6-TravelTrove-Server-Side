@@ -10,6 +10,7 @@ import { User } from '../User/user.model';
 import { TLoginUser, TSocialLoginUser } from './auth.interface';
 import AppError from '../../errors/appError';
 import { TUser } from '../User/user.interface';
+import { sendEmail } from '../../utils/sendEmail';
 
 const registerUser = async (payload: TUser) => {
   // checking if the user is exist
@@ -277,10 +278,45 @@ const refreshToken = async (token: string) => {
   };
 };
 
+const forgetPassword = async (userEmail: string) => {
+  const user = await User.isUserExistsByEmail(userEmail);
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User does not exist!');
+  }
+
+  const jwtPayload = {
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    profilePhoto: user.profilePhoto,
+    role: user.role,
+    status: user.status,
+    followers: user.followers,
+    following: user.following,
+    isVerified: user.isVerified,
+    totalUpvote: user.totalUpvote,
+    postCount: user.postCount,
+    premiumStart: user.premiumStart,
+    premiumEnd: user.premiumEnd,
+  };
+
+  const resetToken = createToken(
+    jwtPayload,
+    config.jwt_access_secret as string,
+    '10m',
+  );
+
+  const resetUILink = `${config.reset_pass_ui_link}?id=${user._id}&token=${resetToken} `;
+
+  sendEmail(user.email, resetUILink);
+};
+
 export const AuthServices = {
   registerUser,
   loginUser,
   changePassword,
   refreshToken,
   socialLogin,
+  forgetPassword,
 };
