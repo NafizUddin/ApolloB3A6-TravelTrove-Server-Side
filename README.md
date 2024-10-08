@@ -4,7 +4,7 @@
 
 **Project Task:** Building the backend for a "Travel Tips & Destination Guides" platform.
 
-**Project Motive:** to build an engaging community of travel enthusiasts, enabling users to share their personal travel stories, exchange valuable tips, and interact with fellow travelers.
+**Project Motive:** Creating a backend to build an engaging community of travel enthusiasts, enabling users to share their personal travel stories, exchange valuable tips, and interact with fellow travelers.
 
 ## :computer: Server Live Link
 
@@ -23,7 +23,6 @@ Click here to see the Backend Server Live Link: [https://traveltrove-server.verc
 - eslint
 - prettier
 - vercel
-
 
 ## :link: How to run the application locally
 
