@@ -49,8 +49,8 @@ const createPostIntoDB = async (
 };
 
 const getAllPostsFromDB = async (query: Record<string, unknown>) => {
-  const { sort, searchTerm, page = 1, limit = 5, ...searchQuery } = query;
-  const skip = (Number(page) - 1) * Number(limit); // Calculate skip
+  const { sort, searchTerm, page = 1, limit = 5, category, ...searchQuery } = query;
+  const skip = (Number(page) - 1) * Number(limit);
 
   // Base aggregation pipeline
   const aggregationPipeline: any[] = [
@@ -90,6 +90,13 @@ const getAllPostsFromDB = async (query: Record<string, unknown>) => {
     } as any);
   }
 
+  // Add category filter if category is provided
+  if (category) {
+    aggregationPipeline.push({
+      $match: { category: category } // Adjust this as needed for your filtering logic
+    });
+  }
+
   // Add sorting logic
   if (sort === 'upvote' || sort === 'downvote') {
     aggregationPipeline.push({
@@ -112,6 +119,7 @@ const getAllPostsFromDB = async (query: Record<string, unknown>) => {
 
   return { result };
 };
+
 
 const addPostUpvoteIntoDB = async (
   postId: string,
