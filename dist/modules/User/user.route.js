@@ -1,0 +1,20 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.UserRoutes = void 0;
+const express_1 = __importDefault(require("express"));
+const user_controller_1 = require("./user.controller");
+const auth_1 = __importDefault(require("../../middlewares/auth"));
+const user_constant_1 = require("./user.constant");
+const validateRequest_1 = __importDefault(require("../../middlewares/validateRequest"));
+const user_validation_1 = require("./user.validation");
+const router = express_1.default.Router();
+router.post('/:followedId/follow', (0, auth_1.default)(user_constant_1.USER_ROLE.USER), user_controller_1.UserControllers.addFollowing);
+router.delete('/:followedId/follow', (0, auth_1.default)(user_constant_1.USER_ROLE.USER), user_controller_1.UserControllers.removeFollowing);
+router.put('/:id', (0, auth_1.default)(user_constant_1.USER_ROLE.USER, user_constant_1.USER_ROLE.ADMIN), (0, validateRequest_1.default)(user_validation_1.UserValidation.updateUserValidationSchema), user_controller_1.UserControllers.updateUser);
+router.put('/premium/start-premium', (0, auth_1.default)(user_constant_1.USER_ROLE.USER), (0, validateRequest_1.default)(user_validation_1.UserValidation.getPremiumValidationSchema), user_controller_1.UserControllers.startPremium);
+router.get('/', (0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN), user_controller_1.UserControllers.getAllUsers);
+router.get('/:id', user_controller_1.UserControllers.getSingleUser);
+exports.UserRoutes = router;
