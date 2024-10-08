@@ -49,7 +49,8 @@ const createPostIntoDB = async (
 };
 
 const getAllPostsFromDB = async (query: Record<string, unknown>) => {
-  const { sort, searchTerm, ...searchQuery } = query;
+  const { sort, searchTerm, page = 1, limit = 5, ...searchQuery } = query;
+  const skip = (Number(page) - 1) * Number(limit); // Calculate skip
 
   // Base aggregation pipeline
   const aggregationPipeline: any[] = [
@@ -75,6 +76,7 @@ const getAllPostsFromDB = async (query: Record<string, unknown>) => {
     },
   ];
 
+  // Add search filter if searchTerm is provided
   if (searchTerm) {
     const searchRegex = new RegExp(searchTerm as string, 'i');
     aggregationPipeline.push({
@@ -88,6 +90,7 @@ const getAllPostsFromDB = async (query: Record<string, unknown>) => {
     } as any);
   }
 
+  // Add sorting logic
   if (sort === 'upvote' || sort === 'downvote') {
     aggregationPipeline.push({
       $sort: sort === 'upvote' ? { upvoteCount: -1 } : { downvoteCount: 1 },
@@ -97,6 +100,9 @@ const getAllPostsFromDB = async (query: Record<string, unknown>) => {
       $sort: { createdAt: -1 },
     } as any);
   }
+
+  // Add pagination to the pipeline
+  aggregationPipeline.push({ $skip: skip }, { $limit: Number(limit) });
 
   const result = await Post.aggregate(aggregationPipeline);
 
