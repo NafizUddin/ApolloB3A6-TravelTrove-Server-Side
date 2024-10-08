@@ -192,21 +192,25 @@ const socialLogin = async (payload: TSocialLoginUser) => {
   };
 };
 
-const changePassword = async (
-  userData: JwtPayload,
-  payload: { oldPassword: string; newPassword: string },
+const resetPassword = async (
+  payload: { email: string; newPassword: string },
+  token: string,
 ) => {
   // checking if the user is exist
-  const user = await User.isUserExistsByEmail(userData.email);
+  const user = await User.isUserExistsByEmail(payload.email);
 
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user is not found!');
   }
 
-  //checking if the password is correct
+  const decoded = jwt.verify(
+    token,
+    config.jwt_access_secret as string,
+  ) as JwtPayload;
 
-  if (!(await User.isPasswordMatched(payload.oldPassword, user?.password)))
-    throw new AppError(httpStatus.FORBIDDEN, 'Password do not matched');
+  if (payload.email !== decoded.email) {
+    throw new AppError(httpStatus.FORBIDDEN, 'You are forbidden!');
+  }
 
   //hash new password
   const newHashedPassword = await bcrypt.hash(
@@ -216,8 +220,8 @@ const changePassword = async (
 
   await User.findOneAndUpdate(
     {
-      email: userData.email,
-      role: userData.role,
+      email: decoded.email,
+      role: decoded.role,
     },
     {
       password: newHashedPassword,
@@ -307,7 +311,7 @@ const forgetPassword = async (userEmail: string) => {
     '10m',
   );
 
-  const resetUILink = `${config.reset_pass_ui_link}?id=${user._id}&token=${resetToken} `;
+  const resetUILink = `${config.reset_pass_ui_link}?email=${user.email}&token=${resetToken} `;
 
   sendEmail(user.email, resetUILink);
 };
@@ -315,7 +319,7 @@ const forgetPassword = async (userEmail: string) => {
 export const AuthServices = {
   registerUser,
   loginUser,
-  changePassword,
+  resetPassword,
   refreshToken,
   socialLogin,
   forgetPassword,
