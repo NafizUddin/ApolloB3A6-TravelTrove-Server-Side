@@ -16,5 +16,5 @@ router.delete('/:followedId/follow', (0, auth_1.default)(user_constant_1.USER_RO
 router.put('/:id', (0, auth_1.default)(user_constant_1.USER_ROLE.USER, user_constant_1.USER_ROLE.ADMIN), (0, validateRequest_1.default)(user_validation_1.UserValidation.updateUserValidationSchema), user_controller_1.UserControllers.updateUser);
 router.put('/premium/start-premium', (0, auth_1.default)(user_constant_1.USER_ROLE.USER), (0, validateRequest_1.default)(user_validation_1.UserValidation.getPremiumValidationSchema), user_controller_1.UserControllers.startPremium);
 router.get('/', (0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN), user_controller_1.UserControllers.getAllUsers);
-router.get('/:id', user_controller_1.UserControllers.getSingleUser);
+router.get('/:id', (0, auth_1.default)(user_constant_1.USER_ROLE.ADMIN, user_constant_1.USER_ROLE.USER), user_controller_1.UserControllers.getSingleUser);
 exports.UserRoutes = router;

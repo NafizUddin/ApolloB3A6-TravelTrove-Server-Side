@@ -49,7 +49,14 @@ const createPostIntoDB = async (
 };
 
 const getAllPostsFromDB = async (query: Record<string, unknown>) => {
-  const { sort, searchTerm, page = 1, limit = 5, category, ...searchQuery } = query;
+  const {
+    sort,
+    searchTerm,
+    page = 1,
+    limit = 5,
+    category,
+    ...searchQuery
+  } = query;
   const skip = (Number(page) - 1) * Number(limit);
 
   // Base aggregation pipeline
@@ -93,7 +100,7 @@ const getAllPostsFromDB = async (query: Record<string, unknown>) => {
   // Add category filter if category is provided
   if (category) {
     aggregationPipeline.push({
-      $match: { category: category } // Adjust this as needed for your filtering logic
+      $match: { category: category }, // Adjust this as needed for your filtering logic
     });
   }
 
@@ -119,7 +126,6 @@ const getAllPostsFromDB = async (query: Record<string, unknown>) => {
 
   return { result };
 };
-
 
 const addPostUpvoteIntoDB = async (
   postId: string,
@@ -416,13 +422,23 @@ const deletePostFromDB = async (
   try {
     session.startTransaction();
 
+    const postWillBeDeleted = await Post.findById(id);
+
     const result = await Post.findByIdAndDelete(id);
 
-    await User.findByIdAndUpdate(
-      _id,
-      { $inc: { postCount: -1 } },
-      { new: true, session },
-    );
+    if (postWillBeDeleted?.postAuthor?._id !== _id) {
+      await User.findByIdAndUpdate(
+        postWillBeDeleted?.postAuthor?._id,
+        { $inc: { postCount: -1 } },
+        { new: true, session },
+      );
+    } else {
+      await User.findByIdAndUpdate(
+        _id,
+        { $inc: { postCount: -1 } },
+        { new: true, session },
+      );
+    }
 
     await session.commitTransaction();
     await session.endSession();

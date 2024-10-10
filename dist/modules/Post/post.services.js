@@ -120,7 +120,7 @@ const getAllPostsFromDB = (query) => __awaiter(void 0, void 0, void 0, function*
     // Add category filter if category is provided
     if (category) {
         aggregationPipeline.push({
-            $match: { category: category } // Adjust this as needed for your filtering logic
+            $match: { category: category }, // Adjust this as needed for your filtering logic
         });
     }
     // Add sorting logic
@@ -309,6 +309,7 @@ const updatePostIntoDB = (payload, id) => __awaiter(void 0, void 0, void 0, func
     return result;
 });
 const deletePostFromDB = (id, userData) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
     const { email, _id } = userData;
     const user = yield user_model_1.User.isUserExistsByEmail(email);
     if (!user) {
@@ -317,8 +318,14 @@ const deletePostFromDB = (id, userData) => __awaiter(void 0, void 0, void 0, fun
     const session = yield mongoose_1.default.startSession();
     try {
         session.startTransaction();
+        const postWillBeDeleted = yield post_model_1.Post.findById(id);
         const result = yield post_model_1.Post.findByIdAndDelete(id);
-        yield user_model_1.User.findByIdAndUpdate(_id, { $inc: { postCount: -1 } }, { new: true, session });
+        if (((_a = postWillBeDeleted === null || postWillBeDeleted === void 0 ? void 0 : postWillBeDeleted.postAuthor) === null || _a === void 0 ? void 0 : _a._id) !== _id) {
+            yield user_model_1.User.findByIdAndUpdate((_b = postWillBeDeleted === null || postWillBeDeleted === void 0 ? void 0 : postWillBeDeleted.postAuthor) === null || _b === void 0 ? void 0 : _b._id, { $inc: { postCount: -1 } }, { new: true, session });
+        }
+        else {
+            yield user_model_1.User.findByIdAndUpdate(_id, { $inc: { postCount: -1 } }, { new: true, session });
+        }
         yield session.commitTransaction();
         yield session.endSession();
         return result;

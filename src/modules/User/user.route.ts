@@ -34,6 +34,10 @@ router.put(
 );
 
 router.get('/', auth(USER_ROLE.ADMIN), UserControllers.getAllUsers);
-router.get('/:id', UserControllers.getSingleUser);
+router.get(
+  '/:id',
+  auth(USER_ROLE.ADMIN, USER_ROLE.USER),
+  UserControllers.getSingleUser,
+);
 
 export const UserRoutes = router;

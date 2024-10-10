@@ -6,7 +6,6 @@ import notFound from './middlewares/notFound';
 import cookieParser from 'cookie-parser';
 import config from './config';
 import httpStatus from 'http-status';
-import path from 'path';
 
 const app: Application = express();
 
@@ -21,7 +20,6 @@ app.use(cookieParser());
 //parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api', router);
 

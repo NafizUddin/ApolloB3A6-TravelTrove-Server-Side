@@ -11,7 +11,7 @@ const user_constant_1 = require("../User/user.constant");
 const validateRequest_1 = __importDefault(require("../../middlewares/validateRequest"));
 const post_controller_1 = require("./post.controller");
 const router = express_1.default.Router();
-router.post('/', (0, auth_1.default)(user_constant_1.USER_ROLE.USER), (0, validateRequest_1.default)(post_validation_1.PostValidations.createPostValidationSchema), post_controller_1.PostControllers.createPost);
+router.post('/', (0, auth_1.default)(user_constant_1.USER_ROLE.USER, user_constant_1.USER_ROLE.ADMIN), (0, validateRequest_1.default)(post_validation_1.PostValidations.createPostValidationSchema), post_controller_1.PostControllers.createPost);
 router.post('/:postId/upvote', (0, auth_1.default)(user_constant_1.USER_ROLE.USER), post_controller_1.PostControllers.addPostUpvote);
 router.post('/:postId/downvote', (0, auth_1.default)(user_constant_1.USER_ROLE.USER), post_controller_1.PostControllers.addPostDownvote);
 router.delete('/:postId/upvote', (0, auth_1.default)(user_constant_1.USER_ROLE.USER), post_controller_1.PostControllers.removePostUpvote);

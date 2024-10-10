@@ -11,7 +11,6 @@ const notFound_1 = __importDefault(require("./middlewares/notFound"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const config_1 = __importDefault(require("./config"));
 const http_status_1 = __importDefault(require("http-status"));
-const path_1 = __importDefault(require("path"));
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)({
     credentials: true,
@@ -21,7 +20,6 @@ app.use((0, cookie_parser_1.default)());
 //parser
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
-app.use(express_1.default.static(path_1.default.join(__dirname, 'public')));
 app.use('/api', routes_1.default);
 //Testing
 app.get('/', (req, res) => {
